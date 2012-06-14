@@ -6,16 +6,19 @@ Version: 0.2
 Author: Shawn Alverson
 Author URI: http://www.shawnalverson.com/
 
+Included 
 Dependancies
+
 jQueryAutocompletePlugin: https://github.com/agarzola/jQueryAutocompletePlugin
 jQuery-Tags-Input(custom fork) https://github.com/tablatronix/jQuery-Tags-Input
-    xoxco / jQuery-Tags-Input: https://github.com/xoxco/jQuery-Tags-Input
+xoxco / jQuery-Tags-Input: https://github.com/xoxco/jQuery-Tags-Input
 
 */
 
 $PLUGIN_ID = "sa_tags";
 $PLUGINPATH = $SITEURL.'plugins/'.$PLUGIN_ID.'/';
 $sa_url = "http://tablatronix.com/getsimple-cms/sa-tags-plugin/";
+$sa_tags_debug = false;
 
 # get correct id for plugin
 $thisfile=basename(__FILE__, ".php");
@@ -52,7 +55,8 @@ function pageUsesTags()
   if (basename($_SERVER['PHP_SELF']) == 'edit.php') return true;
   if (basename($_SERVER['PHP_SELF']) == 'loadtab.php' && $_REQUEST['item']=='i18n_gallery_edit') return true;
   if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='i18n_specialpages') return true;
-  
+  if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='blog') return true;
+  if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='sa_welcome') return true;
 }
 
 
@@ -77,7 +81,7 @@ function SA_queue_style($name,$where)
 }
 
 function sa_tags_executeheader(){
-  GLOBAL $PLUGIN_ID, $PLUGINPATH, $owner, $GSADMIN, $SITEURL;
+  GLOBAL $PLUGIN_ID, $PLUGINPATH, $owner, $GSADMIN, $SITEURL,$sa_tags_debug;
 
   // echo "sa_tags_executeheader";
   
@@ -87,22 +91,26 @@ function sa_tags_executeheader(){
   $questyle  = $owner."queue_style";
   
   $regscript($PLUGIN_ID, $PLUGINPATH.'js/sa_tags.js', '0.1', FALSE);
-  # $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.min.js', '1.0', FALSE);
+  
+	// tags input
+	# $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.min.js', '1.0', FALSE);
   $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.2.0.js', '2.0', FALSE);
-  # $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.1.3.3.js', '1.3.3', FALSE);
-  # $regscript('jquery_autocomplete', $PLUGINPATH.'js/jquery.autocomplete.min.js', '1.2.2', FALSE);
+  $regstyle($PLUGIN_ID, $PLUGINPATH.'css/sa.jquery.tagsinput.css', '0.1', 'screen');
+  
+	// jquery autocomplete
+	# $regscript('jquery_autocomplete', $PLUGINPATH.'js/jquery.autocomplete.min.js', '1.2.2', FALSE);
   # $regscript('jquery_ui_autocomplete', $PLUGINPATH.'js/jquery.ui.autocomplete.js', '', FALSE);
-  $regscript('jquery_ui', $SITEURL.$GSADMIN.'/template/js/jquery-ui.min.js', '1.0', FALSE);
-  $regscript('jquery_ui_dependancies', $PLUGINPATH.'js/jquery-ui-1.8.19.custom.js', '', FALSE);
+  
+	// jquery ui
+	# $regscript('jquery_ui', $SITEURL.$GSADMIN.'/template/js/jquery-ui.min.js', '1.0', FALSE);
+  # $regscript('jquery_ui_dependancies', $PLUGINPATH.'js/jquery-ui-1.8.19.custom.js', '', FALSE);
+  $regstyle('jquery_ui_dependancies', $PLUGINPATH.'css/jquery-ui-1.8.20.custom.css', '', 'screen');
   
   $quescript($PLUGIN_ID,GSBACK); 
   $quescript('jquery_tagsinput',GSBACK); 
   $quescript('jquery_ui',GSBACK); 
   $quescript('jquery_ui_dependancies',GSBACK); 
   # $quescript('jquery_ui_autocomplete',GSBACK); 
-
-  $regstyle($PLUGIN_ID, $PLUGINPATH.'css/sa.jquery.tagsinput.css', '0.1', 'screen');
-  $regstyle('jquery_ui_dependancies', $PLUGINPATH.'css/jquery-ui-1.8.19.custom.css', '', 'screen');
 
   $questyle($PLUGIN_ID,GSBACK); 
   $questyle('jquery_ui_dependancies',GSBACK); 

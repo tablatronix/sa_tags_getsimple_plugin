@@ -35,7 +35,7 @@
 	        input = $(this),
 	        testSubject = $('#'+$(this).data('tester_id'));
 	
-	    if (val === (val = input.val())) {return;}
+	    if (val === (val = input._val())) {return;}
 	
 	    // Enter new content into testSubject
 	    var escaped = val.replace(/&/g, '&amp;').replace(/\s/g,' ').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -87,7 +87,7 @@
 			this.each(function() { 
 
 				var settings = $(this).data('settings');
-				var tagslist = $(this).val().split(settings.delimiter);
+				var tagslist = $(this)._val().split(settings.delimiter);
 				if (tagslist[0] == '') { 
 					tagslist = new Array();
 				}
@@ -122,7 +122,7 @@
 				
 				if (value !='' && skipTag != true) { 
             if(settings.readOnly != true){
-                    $('<span>').addClass('tag').append(
+                    $('<span>').addClass('tag').addClass('tag_' + value).append(
                         $('<span>').text(value).append('&nbsp;&nbsp;'),
                           $('<a>', {
                             href  : '#',
@@ -133,12 +133,13 @@
                           })                         
                     ).insertBefore(settings.input_wrapper);
             } else {
-                  $('<span>').addClass('tag').append($('<span>').text(value)).insertBefore(settings.input_wrapper);
+                  $('<span>').addClass('tag').addClass('tag_' + value).append($('<span>').text(value)).insertBefore(settings.input_wrapper);
+                  
             }
             
 					tagslist.push(value);
 				
-					$(settings.fake_input).val('');
+					$(settings.fake_input)._val('');
 					if (options.focus) {
 						$(settings.fake_input).focus();
 					} else {		
@@ -168,7 +169,7 @@
 			value = unescape(value);
 			this.each(function() { 
 				var settings = $(this).data('settings');	
-				var old = $(this).val().split(settings.delimiter);
+				var old = $(this)._val().split(settings.delimiter);
 					
 				$(settings.holder + ' .tag').remove();
 				str = '';
@@ -191,7 +192,7 @@
 	
 	$.fn.tagExist = function(val) {	
 			var settings = $(this).data('settings');
-			var tagslist = $(this).val().split(settings.delimiter);	
+			var tagslist = $(this)._val().split(settings.delimiter);	
 			return (jQuery.inArray(val, tagslist) >= 0); //true when tag exists, false when not
 	};
 	
@@ -201,7 +202,24 @@
 		$(settings.holder + ' .tag').remove();
 		$.fn.tagsInput.importTags(this,str);
 	}
-		
+
+	$.fn._val = function(val){
+		if(typeof(val) != "undefined" && val !== null){ 
+			if($(this).is(':input')){
+				$(this).val(val); 
+			} else {
+				$(this).text(val); 
+			}
+			
+		}	else { 
+				if($(this).is(':input')){
+					return $(this).val(); 
+				} else {
+					return $(this).text();
+				}
+		}	
+	}
+	
 	$.fn.tagsInput = function(options) { 
 	    var settings = jQuery.extend({
 	      interactive:true,
@@ -268,15 +286,15 @@
 			$(this).data('settings',data);
 
 	
-			if ($(this).val()!='') { 
-				$.fn.tagsInput.importTags($(this),$(this).val());
+			if ($(this)._val()!='') { 
+				$.fn.tagsInput.importTags($(this),$(this)._val());
 			}
 
 
 
 					
 			if (settings.interactive) { 
-				$(data.fake_input).val($(data.fake_input).attr('data-default'));
+				$(data.fake_input)._val($(data.fake_input).attr('data-default'));
 				$(data.fake_input).css('color',settings.placeholderColor);
 		        $(data.fake_input).resetAutosize(settings);
 		
@@ -289,8 +307,8 @@
 				// if the user clicks in the input field…
 				$(data.fake_input).on('focus',data,function(event) {
 					// empty the field
-					if ($(event.data.fake_input).val()==$(event.data.fake_input).attr('data-default')) { 
-						$(event.data.fake_input).val('');
+					if ($(event.data.fake_input)._val()==$(event.data.fake_input).attr('data-default')) { 
+						$(event.data.fake_input)._val('');
 					}
 					// set the field to the active color
 					$(event.data.fake_input).css('color','#000000');		
@@ -345,16 +363,16 @@
 				// UNLESS the autocompleter is open
 				// and then set back to default.
 				$(data.fake_input).on('blur',data,function(event) { 
-					if ($(event.data.fake_input).val()!='' && $(event.data.fake_input).val()!=event.data.defaultText) {
+					if ($(event.data.fake_input)._val()!='' && $(event.data.fake_input)._val()!=event.data.defaultText) {
 						if (!$(this).data('autocompleteopen')) { 
-							if( (event.data.minChars <= $(event.data.fake_input).val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input).val().length)) )
-								$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
+							if( (event.data.minChars <= $(event.data.fake_input)._val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input)._val().length)) )
+								$(event.data.real_input).addTag($(event.data.fake_input)._val(),{focus:true,unique:(settings.unique)});
 						} else {
 							// autocomplete is open, do not add tag because 
 							// this will be handled by the autocompleteselect event.
 						}
 					} else {
-						$(event.data.fake_input).val(event.data.defaultText);
+						$(event.data.fake_input)._val(event.data.defaultText);
 						$(event.data.fake_input).css('color',event.data.placeholderColor);
 						$(event.data.fake_input).removeClass('not_valid');
 					}
@@ -366,8 +384,8 @@
 				$(data.fake_input).on('keypress',data,function(event) {
 					if (event.which==event.data.delimiter.charCodeAt(0) || event.which==13 ) {
 					    event.preventDefault();
-						if( (event.data.minChars <= $(event.data.fake_input).val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input).val().length)) )
-							$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
+						if( (event.data.minChars <= $(event.data.fake_input)._val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input)._val().length)) )
+							$(event.data.real_input).addTag($(event.data.fake_input)._val(),{focus:true,unique:(settings.unique)});
 					  	$(event.data.fake_input).resetAutosize(settings);
 						return false;
 					} else if (event.data.autosize) {
@@ -379,7 +397,7 @@
 				//Delete last tag on backspace
 				data.removeWithBackspace && $(data.fake_input).on('keydown',data, function(event)
 				{
-					if(event.keyCode == 8 && $(this).val() == '')
+					if(event.keyCode == 8 && $(this)._val() == '')
 					{
 						 event.preventDefault();
 						 var last_tag = $(this).closest('.tagsinput').find('.tag:last').text();
@@ -407,12 +425,13 @@
 	
 	$.fn.tagsInput.updateTagsField = function(obj,tagslist) { 
 		var settings = $(obj).data('settings');
-		$(obj).val(tagslist.join(settings.delimiter)).trigger('change');
+		$(obj)._val(tagslist.join(settings.delimiter))
+		if($(obj).is(':input')) $(obj).trigger('change');
 	};
 	
 	$.fn.tagsInput.importTags = function(obj,val) {			
 		var settings = $(obj).data('settings');
-		$(obj).val('');
+		$(obj)._val('');
 		var tags = val.split(settings.delimiter);
 		for (i=0; i<tags.length; i++) { 
 			$(obj).addTag(tags[i],{focus:false,callback:false});

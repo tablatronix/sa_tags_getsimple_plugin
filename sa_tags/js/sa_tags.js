@@ -1,24 +1,18 @@
 $(document).ready(function() {
   
-  // edit.php
-  $('#post-metak').addTagInput();
+	// pages tag input
+  $('input:text[name=post-metak]').addTagInput();
 
-  $('#post-tags').addTagInput();
-  
-  
+	// mikeh blog plugin tag input
+  $('input:text[name=post-tags]').addTagInput();
+    
   // i8n gallery
   // This is for i18n gallery
-  // requires inputs to have ids to work
-  // edit.php line 233 
-  // id="post-tag-<?php echo $i ?>"
-  // or similar
-  
-  	$('input[name$=_tags]').each(function(index,element){
-      $(this).attr("id", "tag_"+index);
-      $(this).addClass('tagsinput');      
-      $(this).addTagInput();
-    });
-      
+	$('input:text[name$=_tags]').addTagInput();
+	
+	// generic support
+  $('.tags_input').addTagInput();
+	
 });
 
 // If tags not already defined define it here
@@ -29,15 +23,10 @@ if(!tags) var tags = ['yellow','green','blue','red'];
 jQuery.fn.addTagInput = function(){
   
     $(this).tagsInput({
+			readOnly: false, 
       width:'auto',
       height:'auto',
-      minHeight:'auto',
-      onChange: function(elem, elem_tags){
-        $('.tag').each(function()
-        {
-          $(this).addClass('tag_'+$(this).text());
-        });
-      },        
+      minHeight:'auto',    
       autocomplete_url:tags,      
       autocomplete:{
         minChars: 3,

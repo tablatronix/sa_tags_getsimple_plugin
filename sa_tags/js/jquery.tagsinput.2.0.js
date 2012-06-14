@@ -120,9 +120,11 @@
 					}
 				}
 				
+				
 				if (value !='' && skipTag != true) { 
+						tag_class=value.replace(/\s/g, "_");
             if(settings.readOnly != true){
-                    $('<span>').addClass('tag').addClass('tag_' + value).append(
+                    $('<span>').addClass('tag').addClass('tag_' + tag_class).append(
                         $('<span>').text(value).append('&nbsp;&nbsp;'),
                           $('<a>', {
                             href  : '#',
@@ -133,7 +135,7 @@
                           })                         
                     ).insertBefore(settings.input_wrapper);
             } else {
-                  $('<span>').addClass('tag').addClass('tag_' + value).append($('<span>').text(value)).insertBefore(settings.input_wrapper);
+                  $('<span>').addClass('tag').addClass('tag_' + tag_class).append($('<span>').text(value)).insertBefore(settings.input_wrapper);
                   
             }
             

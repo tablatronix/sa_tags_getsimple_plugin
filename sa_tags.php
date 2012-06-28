@@ -15,10 +15,10 @@ xoxco / jQuery-Tags-Input: https://github.com/xoxco/jQuery-Tags-Input
 
 */
 
-$PLUGIN_ID = "sa_tags";
-$PLUGINPATH = $SITEURL.'plugins/'.$PLUGIN_ID.'/';
-$sa_url = "http://tablatronix.com/getsimple-cms/sa-tags-plugin/";
-$sa_tags_debug = false;
+$SATAGS['PLUGIN_ID'] = "sa_tags";
+$SATAGS['PLUGIN_PATH'] = $SITEURL.'plugins/'.$SATAGS['PLUGIN_ID'].'/';
+$SATAGS['PLUGIN_URL'] = "http://tablatronix.com/getsimple-cms/sa-tags-plugin/";
+$SATAGS['DEBUG'] = false;
 
 # get correct id for plugin
 $thisfile=basename(__FILE__, ".php");
@@ -29,20 +29,20 @@ register_plugin(
 	'sa Tags', 	                //Plugin name
 	'0.2', 		                  //Plugin version
 	'Shawn Alverson',           //Plugin author
-	$sa_url,                    //author website
+	$SATAGS['PLUGIN_URL'],      //author website
 	'Adds interactive tagging', //Plugin description
 	'',                         //page type - on which admin tab to display
 	''                          //main function (administration)
 );
 
-$owner = "";
+$SATAGS['owner'] = "";
 
 # activate filters
 // use header hook if older than 3.1
 if (pageUsesTags()) {
   if(floatval(GSVERSION) < 3.1){
     add_action('header', 'sa_tags_executeheader');
-    $owner = "SA_";
+    $SATAGS['owner'] = "SA_";
   }  
   else{
     sa_tags_executeheader();
@@ -81,8 +81,12 @@ function SA_queue_style($name,$where)
 }
 
 function sa_tags_executeheader(){
-  GLOBAL $PLUGIN_ID, $PLUGINPATH, $owner, $GSADMIN, $SITEURL,$sa_tags_debug;
+  GLOBAL $SATAGS, $GSADMIN, $SITEURL;
 
+	$PLUGIN_ID = $SATAGS['PLUGIN_ID'];
+	$PLUGIN_PATH = $SATAGS['PLUGIN_PATH'];
+	$owner = $SATAGS['owner'];
+	
   // echo "sa_tags_executeheader";
   
   $regscript = $owner."register_script";
@@ -90,12 +94,12 @@ function sa_tags_executeheader(){
   $quescript = $owner."queue_script";
   $questyle  = $owner."queue_style";
   
-  $regscript($PLUGIN_ID, $PLUGINPATH.'js/sa_tags.js', '0.1', FALSE);
+  $regscript($PLUGIN_ID, $PLUGIN_PATH.'js/sa_tags.js', '0.1', FALSE);
   
 	// tags input
-	# $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.min.js', '1.0', FALSE);
-  $regscript('jquery_tagsinput', $PLUGINPATH.'js/jquery.tagsinput.2.0.js', '2.0', FALSE);
-  $regstyle($PLUGIN_ID, $PLUGINPATH.'css/sa.jquery.tagsinput.css', '0.1', 'screen');
+	# $regscript('jquery_tagsinput', $PLUGIN_PATH.'js/jquery.tagsinput.min.js', '1.0', FALSE);
+  $regscript('jquery_tagsinput', $PLUGIN_PATH.'js/jquery.tagsinput.2.0.js', '2.0', FALSE);
+  $regstyle($PLUGIN_ID, $PLUGIN_PATH.'css/sa.jquery.tagsinput.css', '0.1', 'screen');
   
 	// jquery autocomplete
 	# $regscript('jquery_autocomplete', $PLUGINPATH.'js/jquery.autocomplete.min.js', '1.2.2', FALSE);
@@ -103,8 +107,8 @@ function sa_tags_executeheader(){
   
 	// jquery ui
 	# $regscript('jquery_ui', $SITEURL.$GSADMIN.'/template/js/jquery-ui.min.js', '1.0', FALSE);
-  # $regscript('jquery_ui_dependancies', $PLUGINPATH.'js/jquery-ui-1.8.19.custom.js', '', FALSE);
-  $regstyle('jquery_ui_dependancies', $PLUGINPATH.'css/jquery-ui-1.8.20.custom.css', '', 'screen');
+  # $regscript('jquery_ui_dependancies', $PLUGIN_PATH.'js/jquery-ui-1.8.19.custom.js', '', FALSE);
+  $regstyle('jquery_ui_dependancies', $PLUGIN_PATH.'css/jquery-ui-1.8.20.custom.css', '', 'screen');
   
   $quescript($PLUGIN_ID,GSBACK); 
   $quescript('jquery_tagsinput',GSBACK); 

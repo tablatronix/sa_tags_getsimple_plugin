@@ -122,14 +122,14 @@
 				
 				
 				if (value !='' && skipTag != true) { 
-						tag_class=value.replace(/\s/g, "_");
+						tag_class=value.replace(/\s/g, "_").toLowerCase();
             if(settings.readOnly != true){
                     $('<span>').addClass('tag').addClass('tag_' + tag_class).append(
                         $('<span>').text(value).append('&nbsp;&nbsp;'),
                           $('<a>', {
                             href  : '#',
                             title : settings.removeText,
-                            text  : 'x'
+                            html  : '&times;'
                           }).click(function () {
                             return $(settings.real_input).removeTag(escape(value));
                           })                         

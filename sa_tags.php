@@ -54,6 +54,8 @@ function pageUsesTags()
 {
   if (basename($_SERVER['PHP_SELF']) == 'edit.php') return true;
   if (basename($_SERVER['PHP_SELF']) == 'loadtab.php' && $_REQUEST['item']=='i18n_gallery_edit') return true;
+  if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='i18n_gallery') return true;
+  if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='news_manager') return true;  
   if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='i18n_specialpages') return true;
   if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='blog') return true;
   if (basename($_SERVER['PHP_SELF']) == 'load.php' && $_REQUEST['id']=='sa_welcome') return true;
